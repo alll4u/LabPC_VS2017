@@ -13,7 +13,7 @@ int main() {
 	//	cout << e << endl;
 
 	size_t v1 = 42;
-	auto f = [v1]{return ++v1; };
+	auto f = [&v1]{return ++v1; };
 	v1 = 0;
 	auto j = f();
 	cout << j << endl;
