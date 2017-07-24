@@ -11,16 +11,7 @@
 #include<fstream>  
 using namespace std;
 using line_no = vector<string>::size_type;
-class QueryResult {
-	friend ostream& print(ostream&, const QueryResult&);
-public:
-	QueryResult(string s, shared_ptr<set<line_no>> p, shared_ptr<vector<string>> f) :
-		sought(s), lines(p), file(f) {};
-private:
-	string sought;
-	shared_ptr<set<line_no>> lines;
-	shared_ptr<vector<string>> file;
-};
+class QueryResult;
 class TextQuery {
 public:
 	TextQuery(istream &);
@@ -69,7 +60,16 @@ ostream &print(ostream& os, const QueryResult &qr) {
 	return os;
 }
 
-
+class QueryResult {
+	friend ostream& print(ostream&, const QueryResult&);
+public:
+	QueryResult(string s, shared_ptr<set<line_no>> p, shared_ptr<vector<string>> f) :
+		sought(s), lines(p), file(f) {};
+private:
+	string sought;
+	shared_ptr<set<line_no>> lines;
+	shared_ptr<vector<string>> file;
+};
 
 void runQueries(istream &infile) {
 	TextQuery tq(infile);
@@ -79,10 +79,5 @@ void runQueries(istream &infile) {
 		if (!(cin >> s) || s == "q")break;
 		print(cout, tq.query(s)) << endl;
 	}
-}
-void main() {
-	ifstream in("pig.txt");
-	runQueries(in);
-	system("pause");
 }
 
