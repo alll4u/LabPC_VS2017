@@ -80,4 +80,4 @@ void runQueries(istream &infile) {
 		print(cout, tq.query(s)) << endl;
 	}
 }
-
+	
