@@ -11,37 +11,191 @@
 #include<fstream>  
 using namespace std;
 
-class Employee {
+class TreeNode {
 public:
-	Employee(string _name) :name(_name), id(++i){
-		cout << name << "'s id is " << id << endl;
-	}
-	Employee(const Employee &t) :name(t.name), id(++i) {}
-	int id;
-	string name;
-	void show() {
-		cout << "name is "<< name << ", id is "<< id << endl;
-	}
-	Employee &operator=(const Employee &e);
-private:
-	static int i;
+	TreeNode() :value(), left(nullptr), right(nullptr), count(0) {}
+	TreeNode(const string &s, int c) :value(s), count(c), left(nullptr), right(nullptr) {}
+	TreeNode(const TreeNode &);
+	~TreeNode();
+
+	TreeNode &operator=(const TreeNode &);
+public:
+	TreeNode *left;
+	TreeNode *right;
+
+	string value;
+	int count;
+private:	
 };
-int Employee::i = 0;
-Employee &Employee::operator=(const Employee &e) {
-	name = e.name;
+
+TreeNode::TreeNode(const TreeNode &t):value(t.value),count(t.count),left(nullptr),right(nullptr) {
+	if (t.left)
+		left = new TreeNode(*t.left);
+	if (t.right)
+		right = new TreeNode(*t.right);
+}
+
+TreeNode::~TreeNode() {
+	if (left) {
+		delete left;
+	}
+	if (right)
+		delete right;
+}
+
+TreeNode &TreeNode::operator=(const TreeNode &t) {
+	value = t.value;
+	count = t.count;
+	
+	TreeNode *tmp = nullptr;
+	if (t.left)
+		tmp = new TreeNode(*t.left);
+	delete left;
+	left = tmp;
+
+	if (t.right)
+		tmp = new TreeNode(*t.right);
+	delete right;
+	right = tmp;
+	
 	return *this;
 }
+
+class BinStrTree {
+public:
+	BinStrTree(const TreeNode &t = TreeNode()) :root(new TreeNode(t)) {}
+	BinStrTree(const BinStrTree &);
+	
+	BinStrTree &operator=(const BinStrTree &);
+	~BinStrTree();
+
+	TreeNode *root;
+};
+BinStrTree::BinStrTree(const BinStrTree &t) {
+	root = new TreeNode(*t.root);
+	//递归调用TreeNode的拷贝构造函数
+}
+BinStrTree &BinStrTree::operator=(const BinStrTree &t) {
+	TreeNode *tmp = nullptr;
+	if (t.root)
+		tmp = new TreeNode(*t.root);
+	delete root;
+	root = tmp;
+	return *this;
+}
+BinStrTree::~BinStrTree() {
+	//递归调用destructor of ‘TreeNode’
+	delete root;
+}
+
+void preorder(TreeNode &tn) {
+	cout << tn.value << ":" << tn.count << endl;
+	if (tn.left) {
+		preorder(*tn.left);
+	}
+	if (tn.right) {
+		preorder(*tn.right);
+	}
+
+}
+
 void main() {
-	Employee Jony = Employee("jonyj");
-	Employee tt = Employee("tt");
-	Employee vava = tt;
-	Employee xx(tt);
-	xx.show();
-	vava.show();
-	tt.show();
-	Jony.show();
+	//vector<string> vc = { "xiao","fei","ji","xx" };
+	//for (auto i : vc) {
+	//	 
+	//}
+	//BinStrTree bst2;
+	//BinStrTree bst(TreeNode("fei",sizeof("fei")));
+	//
+	//bst.root->left = new TreeNode("2", 2);
+	//bst.root->right = new TreeNode("3", 3);
+	//bst.root->left->left = new TreeNode("4", 4);
+	//bst.root->right->right = new TreeNode("7", 7);
+
+	//preorder(*bst.root);
+
+	string s = "ddda";
+	int n = s.size();
+	string longest;
+	vector<vector<bool>> matrix(n, vector<bool>(n));
+	for (auto it = matrix.begin(); it != matrix.end(); it++) {
+		for (auto it2 = it->begin(); it2 != it->end(); it2++) {
+			cout << *it2 << " ";
+		}
+		cout << endl;
+	}
+
+	for (int i = n-1; i >=0; i--) {
+		for (int j = i; j < n; j++) {
+			if (i == j || (s[i] == s[j] && (j-i<2 || matrix[i + 1][j - 1]))) {
+				matrix[i][j] = true;
+				if (longest.size() < j - i + 1)
+					longest = s.substr(i, j - i + 1);
+			}
+		}
+	}
+	cout << "longest is " << longest << endl;
+
+
 	system("pause");
 }
+
+//class HasPtr {
+//public:
+//	HasPtr(const string &s = string()) :
+//		ps(new string(s)), i(0), use(new size_t(1)) {}
+//	HasPtr(const HasPtr &p) :
+//		ps(new string()), i(p.i), use(p.use) {
+//		++*use;
+//	}
+//	HasPtr& operator=(const HasPtr &);
+//	~HasPtr();
+//private:
+//	string *ps;
+//	int i;
+//	size_t *use;
+//};
+//
+//HasPtr& HasPtr::operator=(const HasPtr &rhs) {
+//	++*rhs.use;
+//	if (--*use == 0) {
+//		delete ps;
+//		delete use;
+//	}
+//	ps = rhs.ps;
+//	i = rhs.i;
+//	use = rhs.use;
+//	return *this;
+//}
+//
+//HasPtr::~HasPtr() {
+//	if (--*use == 0) {
+//		delete ps;
+//		delete use;
+//	}
+//}
+
+
+//class Employee {
+	//public:
+	//	Employee(string _name) :name(_name), id(++i){
+	//		cout << name << "'s id is " << id << endl;
+	//	}
+	//	Employee(const Employee &t) :name(t.name), id(++i) {}
+	//	int id;
+	//	string name;
+	//	void show() {
+	//		cout << "name is "<< name << ", id is "<< id << endl;
+	//	}
+	//	Employee &operator=(const Employee &e);
+	//private:
+	//	static int i;
+	//};
+	//int Employee::i = 0;
+	//Employee &Employee::operator=(const Employee &e) {
+	//	name = e.name;
+	//	return *this;
+	//}
 
 //#include <iostream>
 //#include <vector>
